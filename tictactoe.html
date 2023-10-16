@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tic Tac Toe</title>
+    <style>
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            gap: 2px;
+        }
+
+        .cell {
+            width: 100px;
+            height: 100px;
+            font-size: 36px;
+            text-align: center;
+            vertical-align: middle;
+            background-color: #f2f2f2;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Tic Tac Toe</h1>
+    <div class="board" id="board"></div>
+    <p id="message"></p>
+    <button id="reset">Reset Game</button>
+
+    <script>
+        const board = document.getElementById("board");
+        const message = document.getElementById("message");
+        const resetButton = document.getElementById("reset");
+        const cells = [];
+
+        let currentPlayer = "X";
+        let gameOver = false;
+
+        // Create the game board
+        for (let i = 0; i < 9; i++) {
+            const cell = document.createElement("div");
+            cell.classList.add("cell");
+            cells.push(cell);
+            cell.addEventListener("click", () => makeMove(i));
+            board.appendChild(cell);
+        }
+
+        // Handle a move by a player
+        function makeMove(index) {
+            if (gameOver || cells[index].textContent) return;
+
+            cells[index].textContent = currentPlayer;
+            if (checkForWin()) {
+                message.textContent = `${currentPlayer} wins!`;
+                gameOver = true;
+            } else if (checkForDraw()) {
+                message.textContent = "It's a draw!";
+                gameOver = true;
+            } else {
+                currentPlayer = currentPlayer === "X" ? "O" : "X";
+            }
+        }
+
+        // Check if the current player has won
+        function checkForWin() {
+            const winningCombos = [
+                [0, 1, 2],
+                [3, 4, 5],
+                [6, 7, 8],
+                [0, 3, 6],
+                [1, 4, 7],
+                [2, 5, 8],
+                [0, 4, 8],
+                [2, 4, 6],
+            ];
+
+            for (const combo of winningCombos) {
+                const [a, b, c] = combo;
+                if (cells[a].textContent && cells[a].textContent === cells[b].textContent && cells[a].textContent === cells[c].textContent) {
+                    cells[a].style.backgroundColor = "lightgreen";
+                    cells[b].style.backgroundColor = "lightgreen";
+                    cells[c].style.backgroundColor = "lightgreen";
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        // Check if the game is a draw
+        function checkForDraw() {
+            return cells.every(cell => cell.textContent);
+        }
+
+        // Reset the game
+        resetButton.addEventListener("click", () => {
+            cells.forEach(cell => {
+                cell.textContent = "";
+                cell.style.backgroundColor = "#f2f2f2";
+            });
+            message.textContent = "";
+            currentPlayer = "X";
+            gameOver = false;
+        });
+    </script>
+</body>
+</html>
